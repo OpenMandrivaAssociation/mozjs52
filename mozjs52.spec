@@ -12,10 +12,12 @@ Release:	1
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:	https://queue.taskcluster.net/v1/task/U1nRqVKNRj29NR92pluyxA/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
+Source10:	http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
 BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(python2)
 BuildRequires:	readline-devel
 BuildRequires:	zip
 BuildRequires:	python
@@ -47,10 +49,16 @@ documentation for %{name}. If you like to develop programs using %{name},
 you will need to install %{name}-devel.
 
 %prep
-%setup -q -n mozjs-%{version}/js/src
+%setup -q -n mozjs-%{version}/js/src -a 10
+TOP="$(pwd)"
+cd autoconf-2.13
+./configure --prefix=$TOP/ac213bin
+%make_build
+%make install
 
 %build
 # Need -fpermissive due to some macros using nullptr as bool false
+export AUTOCONF="`pwd`"/ac213bin/bin/autoconf
 export CFLAGS="%{optflags} -fpermissive"
 export CXXFLAGS="$CFLAGS"
 export CC=gcc
