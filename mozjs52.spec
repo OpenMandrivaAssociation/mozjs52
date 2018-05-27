@@ -7,12 +7,14 @@
 
 Summary:	JavaScript interpreter and libraries
 Name:		mozjs52
-Version:	52.7.4
+Version:	52.8.1
 Release:	1
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
-Source0:	https://queue.taskcluster.net/v1/task/U1nRqVKNRj29NR92pluyxA/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
+Source0:	https://queue.taskcluster.net/v1/task/Y_v0j-jqQ4mkVMFD0kRKfg/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
 Source10:	http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
+Patch0:		mozjs-52.8.1-system-libs.patch
+Patch1:		mozjs-52.8.1-fix-crash-on-startup.patch
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
@@ -49,7 +51,17 @@ documentation for %{name}. If you like to develop programs using %{name},
 you will need to install %{name}-devel.
 
 %prep
-%setup -q -n mozjs-%{version}/js/src -a 10
+%autosetup -p1 -n mozjs-%{version} -a 10
+
+#rm -rf nsprpub
+cd config/external/
+for i in freetype2 icu nspr nss sqlite zlib; do
+	rm -rf $i
+	mkdir $i
+	touch $i/moz.build
+done
+cd ../..
+
 TOP="$(pwd)"
 cd autoconf-2.13
 ./configure --prefix=$TOP/ac213bin
@@ -59,25 +71,37 @@ cd autoconf-2.13
 %build
 # Need -fpermissive due to some macros using nullptr as bool false
 export AUTOCONF="`pwd`"/ac213bin/bin/autoconf
-export CFLAGS="%{optflags} -fpermissive"
+export CFLAGS="%{optflags} -fpermissive -fPIC -fuse-ld=bfd"
 export CXXFLAGS="$CFLAGS"
+export LDFLAGS="$CFLAGS"
 export CC=gcc
 export CXX=g++
+export LD=ld.bfd
 
 # Kind of, but not 100%, like autoconf...
+cd js/src
 ./configure \
 	--prefix=%{_prefix} \
 	--libdir=%{_libdir} \
-	--with-system-nspr \
-	--enable-readline \
+	--disable-readline \
 	--enable-shared-js \
-	--enable-optimize \
-	--with-system-zlib \
+	--disable-optimize \
+	--disable-jemalloc \
+	--without-intl-api \
+	--with-system-bz2 \
 	--with-system-icu \
-	--without-intl-api
+	--with-system-jpeg \
+	--with-system-libevent \
+	--with-system-libvpx \
+	--with-system-nspr \
+	--with-system-nss \
+	--with-system-png \
+	--with-system-zlib
+
 %make
 
 %install
+cd js/src
 %makeinstall_std
 
 chmod a-x  %{buildroot}%{_libdir}/pkgconfig/*.pc
@@ -104,6 +128,7 @@ tests/jstests.py -d -s --no-progress ../../js/src/js/src/shell/js || :
 %{_libdir}/*.ajs
 
 %files -n %{libmozjs_devel}
-%doc ../../LICENSE ../../README
+%doc README
+%license LICENSE
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/mozjs-%{major}

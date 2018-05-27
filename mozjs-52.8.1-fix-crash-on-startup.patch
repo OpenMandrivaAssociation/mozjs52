@@ -1,0 +1,12 @@
+diff -up mozjs-52.8.1/js/src/moz.build.omv~ mozjs-52.8.1/js/src/moz.build
+--- mozjs-52.8.1/js/src/moz.build.omv~	2018-05-28 00:36:55.507500588 +0200
++++ mozjs-52.8.1/js/src/moz.build	2018-05-28 00:37:43.885498768 +0200
+@@ -663,6 +663,8 @@ OS_LIBS += [
+     'z',
+ ]
+ 
++USE_LIBS += [ 'mozglue' ]
++
+ if CONFIG['NIGHTLY_BUILD']:
+     DEFINES['ENABLE_BINARYDATA'] = True
+ 

@@ -1,0 +1,17 @@
+diff -up mozjs-52.8.1/js/src/moz.build.1~ mozjs-52.8.1/js/src/moz.build
+--- mozjs-52.8.1/js/src/moz.build.1~	2018-05-27 21:39:23.002901312 +0200
++++ mozjs-52.8.1/js/src/moz.build	2018-05-27 21:40:44.931898230 +0200
+@@ -657,9 +657,10 @@ if CONFIG['ENABLE_INTL_API']:
+             'icuuc',
+         ]
+ 
+-USE_LIBS += [
+-    'nspr',
+-    'zlib',
++OS_LIBS += [
++    'nspr4',
++    'pthread',
++    'z',
+ ]
+ 
+ if CONFIG['NIGHTLY_BUILD']:
