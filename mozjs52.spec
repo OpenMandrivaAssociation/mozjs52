@@ -8,7 +8,7 @@
 Summary:	JavaScript interpreter and libraries
 Name:		mozjs52
 Version:	52.8.1
-Release:	1
+Release:	2
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:	https://queue.taskcluster.net/v1/task/Y_v0j-jqQ4mkVMFD0kRKfg/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
@@ -70,7 +70,7 @@ cd autoconf-2.13
 
 %build
 # Need -fpermissive due to some macros using nullptr as bool false
-export AUTOCONF="`pwd`"/ac213bin/bin/autoconf
+export AUTOCONF="$(pwd)"/ac213bin/bin/autoconf
 export CFLAGS="%{optflags} -fpermissive -fPIC -fuse-ld=bfd"
 export CXXFLAGS="$CFLAGS"
 export LDFLAGS="$CFLAGS"
@@ -98,11 +98,11 @@ cd js/src
 	--with-system-png \
 	--with-system-zlib
 
-%make
+%make_build
 
 %install
 cd js/src
-%makeinstall_std
+%make_install
 
 chmod a-x  %{buildroot}%{_libdir}/pkgconfig/*.pc
 
@@ -111,13 +111,16 @@ rm -f %{buildroot}%{_libdir}/*.a %{buildroot}%{_bindir}/js*
 
 # Install files, not symlinks to build directory
 pushd %{buildroot}%{_includedir}
-    for link in `find . -type l`; do
-	header=`readlink $link`
+    for link in "$(find . -type l)"; do
+	header="$(readlink $link)"
 	rm -f $link
 	cp -p $header $link
     done
 popd
 cp -p js/src/js-config.h %{buildroot}%{_includedir}/mozjs-%{major}
+
+# Remove unneeded files, this files is 500MiB+ of size
+rm -rf %{buildroot}%{_libdir}/*.ajs
 
 %check
 # Some tests will fail
@@ -125,7 +128,6 @@ tests/jstests.py -d -s --no-progress ../../js/src/js/src/shell/js || :
 
 %files -n %{libmozjs}
 %{_libdir}/*.so
-%{_libdir}/*.ajs
 
 %files -n %{libmozjs_devel}
 %doc README
