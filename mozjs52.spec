@@ -51,7 +51,8 @@ documentation for %{name}. If you like to develop programs using %{name},
 you will need to install %{name}-devel.
 
 %prep
-%autosetup -p1 -n mozjs-%{version} -a 10
+%setup -qn mozjs-%{version} -a 10
+%apply_patches
 
 #rm -rf nsprpub
 cd config/external/
@@ -130,7 +131,6 @@ tests/jstests.py -d -s --no-progress ../../js/src/js/src/shell/js || :
 %{_libdir}/*.so
 
 %files -n %{libmozjs_devel}
-%doc README
-%license LICENSE
+%doc README LICENSE
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/mozjs-%{major}
