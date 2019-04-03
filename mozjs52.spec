@@ -15,6 +15,7 @@ Source0:	https://queue.taskcluster.net/v1/task/Y_v0j-jqQ4mkVMFD0kRKfg/runs/0/art
 Source10:	http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
 Patch0:		mozjs-52.8.1-system-libs.patch
 Patch1:		mozjs-52.8.1-fix-crash-on-startup.patch
+Patch2:		firefox-52.7.2esr-add-riscv64.patch
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
