@@ -52,6 +52,7 @@ you will need to install %{name}-devel.
 
 %prep
 %autosetup -p1 -n mozjs-%{version} -a 10
+%config_update
 
 #rm -rf nsprpub
 cd config/external/
