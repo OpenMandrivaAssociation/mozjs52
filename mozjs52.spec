@@ -96,7 +96,6 @@ cd js/src
 	--enable-shared-js \
 	--enable-optimize="-O3" \
 	--enable-pie \
-	--enable-posix-nspr-emulation \
 	--disable-jemalloc \
 	--without-intl-api \
 	--with-system-bz2 \
