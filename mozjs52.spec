@@ -5,10 +5,13 @@
 %define libmozjs_devel %mklibname %{pkgname} %{api} -d
 %define major %(echo %{version} |cut -d. -f1)
 
+# (tpg) optimize a bit
+%global optflags %{optflags} -O3
+
 Summary:	JavaScript interpreter and libraries
 Name:		mozjs52
 Version:	52.8.1
-Release:	3
+Release:	4
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:	https://queue.taskcluster.net/v1/task/Y_v0j-jqQ4mkVMFD0kRKfg/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
@@ -16,6 +19,7 @@ Source10:	http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
 Patch0:		mozjs-52.8.1-system-libs.patch
 Patch1:		mozjs-52.8.1-fix-crash-on-startup.patch
 Patch2:		firefox-52.7.2esr-add-riscv64.patch
+Patch3:		trim.patch
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
@@ -71,6 +75,7 @@ cd autoconf-2.13
 %make install
 
 %build
+%setup_compile_flags
 # Need -fpermissive due to some macros using nullptr as bool false
 export AUTOCONF="$(pwd)"/ac213bin/bin/autoconf
 export CFLAGS="%{optflags} -fpermissive -fPIC -fuse-ld=bfd"
@@ -86,8 +91,12 @@ cd js/src
 	--prefix=%{_prefix} \
 	--libdir=%{_libdir} \
 	--disable-readline \
+	--disable-debug \
+	--disable-debug-symbols \
 	--enable-shared-js \
-	--disable-optimize \
+	--enable-optimize="-O3" \
+	--enable-pie \
+	--enable-posix-nspr-emulation \
 	--disable-jemalloc \
 	--without-intl-api \
 	--with-system-bz2 \
