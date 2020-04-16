@@ -1,6 +1,6 @@
 %global pre_release %{nil}
 %define pkgname mozjs
-%define api 52.7
+%define api 52
 %define libmozjs %mklibname %{pkgname} %{api}
 %define libmozjs_devel %mklibname %{pkgname} %{api} -d
 %define major %(echo %{version} |cut -d. -f1)
