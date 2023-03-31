@@ -11,7 +11,7 @@
 Summary:	JavaScript interpreter and libraries
 Name:		mozjs52
 Version:	52.8.1
-Release:	4
+Release:	5
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:	https://queue.taskcluster.net/v1/task/Y_v0j-jqQ4mkVMFD0kRKfg/runs/0/artifacts/public/build/mozjs-%{version}.tar.bz2
