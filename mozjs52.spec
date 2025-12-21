@@ -21,6 +21,11 @@ Patch1:		mozjs-52.8.1-fix-crash-on-startup.patch
 Patch2:		firefox-52.7.2esr-add-riscv64.patch
 Patch3:		trim.patch
 Patch4:		patch-js_src_jsapi-tests_testPrintf.cpp
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
